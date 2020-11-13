@@ -6,13 +6,13 @@ import { addGetFrontendSourceStage } from './add-get-frontend-source-stage';
 import { addBuildFrontendStage } from './add-build-frontend-stage';
 import { addDeployFrontendToS3Stage } from './add-deploy-frontend-stage';
 
-interface PipelineStackProps extends cdk.StackProps {
+interface FrontendPipelineStackProps extends cdk.StackProps {
   webBucketArn: string;
   frontendRepoArn: string;
 }
 
-export class PipelineStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: PipelineStackProps) {
+export class FrontendPipelineStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: FrontendPipelineStackProps) {
     super(scope, id);
 
     const { webBucketArn, frontendRepoArn } = props;
@@ -27,8 +27,8 @@ export class PipelineStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    const pipeline = new codepipeline.Pipeline(this, 'FrontendDeployPipeline', {
-      pipelineName: `${this.stackName}-deploy-frontend-pipeline`,
+    const pipeline = new codepipeline.Pipeline(this, 'FrontendDeploymentPipeline', {
+      pipelineName: `${this.stackName}-frontend-deployment-pipeline`,
       artifactBucket,
     });
 

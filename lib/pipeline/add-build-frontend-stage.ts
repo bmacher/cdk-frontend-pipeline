@@ -12,7 +12,7 @@ export function addBuildFrontendStage(
 
   const buildFrontendProject = new codebuild.PipelineProject(
     cdk.Stack.of(pipeline),
-    'PipelineProjectFrontend',
+    'FrontendDeploymentPipelineProject',
     {
       environment: {
         privileged: true,
