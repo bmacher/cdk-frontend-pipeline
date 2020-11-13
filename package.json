@@ -8,15 +8,16 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "diff": "cdk --profile dpp-sandbox diff SfubtRepoStack SfubtPipelineStack"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.63.0",
+    "@aws-cdk/assert": "1.69.0",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
-    "aws-cdk": "1.63.0",
+    "aws-cdk": "1.69.0",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-typescript": "^12.0.0",
     "eslint-import-resolver-typescript": "^2.3.0",
@@ -29,8 +30,14 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-codecommit": "1.63.0",
-    "@aws-cdk/core": "1.63.0",
+    "@aws-cdk/aws-codebuild": "1.69.0",
+    "@aws-cdk/aws-codecommit": "1.69.0",
+    "@aws-cdk/aws-codepipeline": "1.69.0",
+    "@aws-cdk/aws-codepipeline-actions": "1.69.0",
+    "@aws-cdk/aws-iam": "1.69.0",
+    "@aws-cdk/aws-s3": "1.69.0",
+    "@aws-cdk/aws-ssm": "1.69.0",
+    "@aws-cdk/core": "1.69.0",
     "source-map-support": "^0.5.16"
   }
 }
