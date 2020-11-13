@@ -6,7 +6,7 @@ import * as codebuild from '@aws-cdk/aws-codebuild';
 /** Adds frontend build stage to pipeline. */
 export function addBuildFrontendStage(
   pipeline: codepipeline.Pipeline,
-  inputArtifact: codepipeline.Artifact,
+  input: codepipeline.Artifact,
 ) {
   const frontendBuildOutput = new codepipeline.Artifact();
 
@@ -26,7 +26,7 @@ export function addBuildFrontendStage(
 
   const frontendBuildAction = new codepipelineActions.CodeBuildAction({
     actionName: 'build-frontend',
-    input: inputArtifact,
+    input,
     project: buildFrontendProject,
     outputs: [frontendBuildOutput],
   });

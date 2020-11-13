@@ -6,13 +6,13 @@ import * as s3 from '@aws-cdk/aws-s3';
 /** Adds frontend deployment to S3 stage to pipeline. */
 export function addDeployFrontendToS3Stage(
   pipeline: codepipeline.Pipeline,
-  inputArtifact: codepipeline.Artifact,
+  input: codepipeline.Artifact,
   webBucketArn: string,
 ) {
   const deployFrontendToS3Action = new codepipelineActions.S3DeployAction({
     actionName: 'deploy-frontend-to-s3',
     bucket: s3.Bucket.fromBucketArn(cdk.Stack.of(pipeline), 'WebBucketArn', webBucketArn),
-    input: inputArtifact,
+    input,
   });
 
   pipeline.addStage({
