@@ -7,7 +7,7 @@ export class ResourceStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string) {
     super(scope, id);
 
-    const webBucket = new s3.Bucket(this, 'SfubtFrontendBucket', {
+    const webBucket = new s3.Bucket(this, 'FrontendBucket', {
       websiteIndexDocument: 'index.html',
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,

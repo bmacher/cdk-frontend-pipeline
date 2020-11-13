@@ -2,18 +2,17 @@ import * as cdk from '@aws-cdk/core';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipelineActions from '@aws-cdk/aws-codepipeline-actions';
 import * as codebuild from '@aws-cdk/aws-codebuild';
-import * as codecommit from '@aws-cdk/aws-codecommit';
 
+/** Adds frontend build stage to pipeline. */
 export function addBuildFrontendStage(
   pipeline: codepipeline.Pipeline,
-  sourceRepo: codecommit.IRepository,
-  sourceArtifact: codepipeline.Artifact,
+  inputArtifact: codepipeline.Artifact,
 ) {
-  const frontendBuildArtifact = new codepipeline.Artifact();
+  const frontendBuildOutput = new codepipeline.Artifact();
 
   const buildFrontendProject = new codebuild.PipelineProject(
     cdk.Stack.of(pipeline),
-    'SfubtCodebuildFrontend',
+    'PipelineProjectFrontend',
     {
       environment: {
         privileged: true,
@@ -28,9 +27,9 @@ export function addBuildFrontendStage(
 
   const frontendBuildAction = new codepipelineActions.CodeBuildAction({
     actionName: 'build-frontend',
-    input: sourceArtifact,
+    input: inputArtifact,
     project: buildFrontendProject,
-    outputs: [frontendBuildArtifact],
+    outputs: [frontendBuildOutput],
   });
 
   pipeline.addStage({
@@ -39,6 +38,6 @@ export function addBuildFrontendStage(
   });
 
   return {
-    frontendBuildArtifact,
+    frontendBuildOutput,
   };
 }

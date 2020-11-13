@@ -11,7 +11,6 @@ const repoStack = new RepoStack(app, 'SfubtRepoStack');
 const resourceStack = new ResourceStack(app, 'SfubtResourceStack');
 
 new PipelineStack(app, 'SfubtPipelineStack', {
-  webBucket: resourceStack.webBucket,
+  webBucketArn: resourceStack.webBucket.bucketArn,
   frontendRepoArn: repoStack.frontendRepoArn,
-  pipelineRepoArn: repoStack.pipelineRepoArn,
 });
