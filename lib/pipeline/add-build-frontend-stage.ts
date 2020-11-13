@@ -17,7 +17,6 @@ export function addBuildFrontendStage(
       environment: {
         privileged: true,
         buildImage: codebuild.LinuxBuildImage.STANDARD_4_0,
-        computeType: codebuild.ComputeType.LARGE,
       },
       // Helps sometimes with speeding up the provisioning stage of the codebuild project
       cache: codebuild.Cache.local(codebuild.LocalCacheMode.DOCKER_LAYER),
