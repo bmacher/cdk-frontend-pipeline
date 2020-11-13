@@ -11,11 +11,10 @@ export function addBuildFrontendStage(
 ) {
   const frontendBuildArtifact = new codepipeline.Artifact();
 
-  const buildFrontendProject = new codebuild.Project(
+  const buildFrontendProject = new codebuild.PipelineProject(
     cdk.Stack.of(pipeline),
     'SfubtCodebuildFrontend',
     {
-      source: codebuild.Source.codeCommit({ repository: sourceRepo }),
       environment: {
         privileged: true,
         buildImage: codebuild.LinuxBuildImage.STANDARD_4_0,
@@ -23,7 +22,7 @@ export function addBuildFrontendStage(
       },
       // Helps sometimes with speeding up the provisioning stage of the codebuild project
       cache: codebuild.Cache.local(codebuild.LocalCacheMode.DOCKER_LAYER),
-      buildSpec: codebuild.BuildSpec.fromSourceFilename('./buildspec.yml'),
+      buildSpec: codebuild.BuildSpec.fromSourceFilename('buildspec.yml'),
     },
   );
 
