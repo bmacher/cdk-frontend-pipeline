@@ -1,0 +1,6 @@
+dist
+cdk.out
+node_modules
+scripts
+*.config.js
+*.d.ts
