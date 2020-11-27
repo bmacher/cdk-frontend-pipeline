@@ -19,7 +19,7 @@ export class InfraStack extends cdk.Stack {
       repositoryName: 'sfubt-frontend',
     });
 
-    new ssm.StringParameter(this, 'FrontendRepositoryArn', {
+    new ssm.StringParameter(this, 'FrontendRepositoryArnParam', {
       parameterName: ssmParamNames.FRONTEND_REPO_ARN,
       description: 'ARN of the Frontend Repository.',
       stringValue: frontendRepo.repositoryArn,

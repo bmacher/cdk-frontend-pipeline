@@ -3,10 +3,10 @@ import * as pipelines from '@aws-cdk/pipelines';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as codepipelineActions from '@aws-cdk/aws-codepipeline-actions';
 import * as codecommit from '@aws-cdk/aws-codecommit';
+import { FrontendBuildPipelineStage } from './frontent-build-pipeline-stage';
 import { ApplicationStage } from './app-stage';
 
 interface PipelineStackProps extends cdk.StackProps {
-  // env: cdk.Environment,
   infraRepoArn: string;
 }
 
@@ -38,6 +38,8 @@ export class PipelineStack extends cdk.Stack {
       synthAction,
     });
 
-    pipeline.addApplicationStage(new ApplicationStage(this, 'DeployFrontendPipeline'));
+    pipeline.addApplicationStage(new FrontendBuildPipelineStage(this, 'DeployFrontendPipeline'));
+
+    pipeline.addApplicationStage(new ApplicationStage(this, 'Development'));
   }
 }

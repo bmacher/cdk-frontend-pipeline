@@ -1,23 +1,12 @@
 import '@aws-cdk/assert/jest';
 import * as assert from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as codecommit from '@aws-cdk/aws-codecommit';
-import { FrontendPipelineStack } from '../lib/frontend-pipeline';
+import { FrontendPipelineStack } from '../lib/frontend-build-pipeline';
 
 describe('FrontendPipelineStack', () => {
   const app = new cdk.App();
-  const stack = new cdk.Stack(app, 'stack');
 
-  const bucket = new s3.Bucket(stack, 'Bucket');
-  const repo = new codecommit.Repository(stack, 'Repo', {
-    repositoryName: 'repo',
-  });
-
-  const frontendPipelineStack = new FrontendPipelineStack(app, 'FrontendPipelineStack', {
-    webBucketArn: bucket.bucketArn,
-    frontendRepoArn: repo.repositoryArn,
-  });
+  const frontendPipelineStack = new FrontendPipelineStack(app, 'FrontendPipelineStack', {});
 
   it('should have a secured S3 Bucket', () => {
     expect(frontendPipelineStack).toHaveResource('AWS::S3::Bucket', {

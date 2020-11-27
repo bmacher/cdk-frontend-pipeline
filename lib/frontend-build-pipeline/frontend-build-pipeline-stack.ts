@@ -3,12 +3,12 @@ import * as codecommit from '@aws-cdk/aws-codecommit';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { ssmParamNames } from '../ssm-param-names';
 import { addGetFrontendSourceStage } from './add-get-frontend-source-stage';
 import { addBuildFrontendStage } from './add-build-frontend-stage';
 import { addDeployFrontendToS3Stage } from './add-deploy-frontend-stage';
+import { ssmParamNames } from '../ssm-param-names';
 
-export class FrontendPipelineStack extends cdk.Stack {
+export class FrontendBuildPipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
@@ -18,12 +18,7 @@ export class FrontendPipelineStack extends cdk.Stack {
       this, 'FrontendRepository', frontendRepoArn.stringValue,
     );
 
-    const webBucket = new s3.Bucket(this, 'WebBucket', {
-      websiteIndexDocument: 'index.html',
-      encryption: s3.BucketEncryption.S3_MANAGED,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
+    const webBucketArn = ssm.StringParameter.fromStringParameterName(this, 'WebBucketyArn', ssmParamNames.WEB_BUCKET_DEV_ARN);
 
     const artifactBucket = new s3.Bucket(this, 'ArtifactBucket', {
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -32,7 +27,7 @@ export class FrontendPipelineStack extends cdk.Stack {
     });
 
     const pipeline = new codepipeline.Pipeline(this, 'FrontendDeploymentPipeline', {
-      pipelineName: 'sfubt-frontend-deployment-pipeline',
+      pipelineName: `${this.stackName}-frontend-deployment-pipeline`,
       artifactBucket,
     });
 
@@ -40,6 +35,6 @@ export class FrontendPipelineStack extends cdk.Stack {
 
     const { frontendBuildOutput } = addBuildFrontendStage(pipeline, frontendSourceOutput);
 
-    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucket);
+    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucketArn.stringValue);
   }
 }

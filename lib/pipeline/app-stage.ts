@@ -1,16 +1,13 @@
 import * as cdk from '@aws-cdk/core';
-import { FrontendPipelineStack } from '../frontend-pipeline';
-
-const accounts: { account2: string; } = require('../../accounts.json');
+import { accounts } from '../../accounts';
+import { FrontendInfraStack } from '../frontend-infra';
 
 export class ApplicationStage extends cdk.Stage {
-  constructor(scope: cdk.Construct, id: string/* , props: cdk.StageProps */) {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StageProps) {
     super(scope, id, {
-      env: { account: accounts.account2, region: 'eu-west-1' },
+      env: { account: accounts.dev, region: 'eu-west-1' },
     });
 
-    new FrontendPipelineStack(this, 'sfubt-frontend-pipeline', {
-      stackName: 'sfubt-frontend-pipeline',
-    });
+    new FrontendInfraStack(this, 'sfubt-frontend-infra', props);
   }
 }
