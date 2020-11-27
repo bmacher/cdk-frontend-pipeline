@@ -1,41 +1,48 @@
 import * as cdk from '@aws-cdk/core';
-import * as codecommit from '@aws-cdk/aws-codecommit';
+import * as pipelines from '@aws-cdk/pipelines';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
-import * as s3 from '@aws-cdk/aws-s3';
-import { addGetFrontendSourceStage } from './add-get-frontend-source-stage';
-import { addBuildFrontendStage } from './add-build-frontend-stage';
-import { addDeployFrontendToS3Stage } from './add-deploy-frontend-stage';
+import * as codepipelineActions from '@aws-cdk/aws-codepipeline-actions';
+import * as codecommit from '@aws-cdk/aws-codecommit';
+import { ApplicationStage } from './app-stage';
 
-interface FrontendPipelineStackProps extends cdk.StackProps {
-  webBucketArn: string;
+interface PipelineStackProps extends cdk.StackProps {
+  // env: cdk.Environment,
+  infraRepoArn: string;
   frontendRepoArn: string;
+  webBucketArn: string;
 }
 
-export class FrontendPipelineStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: FrontendPipelineStackProps) {
-    super(scope, id);
+export class PipelineStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: PipelineStackProps) {
+    super(scope, id, props);
 
-    const { webBucketArn, frontendRepoArn } = props;
+    const { infraRepoArn, frontendRepoArn, webBucketArn } = props;
 
-    const frontendRepo = codecommit.Repository.fromRepositoryArn(
-      this, 'FrontendRepository', frontendRepoArn,
-    );
+    const sourceArtifact = new codepipeline.Artifact();
+    const cloudAssemblyArtifact = new codepipeline.Artifact();
 
-    const artifactBucket = new s3.Bucket(this, 'ArtifactBucket', {
-      encryption: s3.BucketEncryption.S3_MANAGED,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    const sourceAction = new codepipelineActions.CodeCommitSourceAction({
+      actionName: 'CodeCommit',
+      output: sourceArtifact,
+      repository: codecommit.Repository.fromRepositoryArn(this, 'SfubtInfraRepo', infraRepoArn),
+      branch: 'master',
     });
 
-    const pipeline = new codepipeline.Pipeline(this, 'FrontendDeploymentPipeline', {
-      pipelineName: `${this.stackName}-frontend-deployment-pipeline`,
-      artifactBucket,
+    const synthAction = pipelines.SimpleSynthAction.standardYarnSynth({
+      sourceArtifact,
+      cloudAssemblyArtifact,
     });
 
-    const { frontendSourceOutput } = addGetFrontendSourceStage(pipeline, frontendRepo);
+    const pipeline = new pipelines.CdkPipeline(this, 'SfubtPipeline', {
+      pipelineName: 'sfubt-pipeline',
+      cloudAssemblyArtifact,
+      sourceAction,
+      synthAction,
+    });
 
-    const { frontendBuildOutput } = addBuildFrontendStage(pipeline, frontendSourceOutput);
-
-    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucketArn);
+    pipeline.addApplicationStage(new ApplicationStage(this, 'Development', {
+      frontendRepoArn,
+      webBucketArn,
+    }));
   }
 }

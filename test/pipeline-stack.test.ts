@@ -3,7 +3,7 @@ import * as assert from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as codecommit from '@aws-cdk/aws-codecommit';
-import { FrontendPipelineStack } from '../lib/pipeline/pipeline-stack';
+import { FrontendPipelineStack } from '../lib/frontend-pipeline';
 
 describe('FrontendPipelineStack', () => {
   const app = new cdk.App();
