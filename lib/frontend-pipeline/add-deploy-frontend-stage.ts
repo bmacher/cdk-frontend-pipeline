@@ -11,7 +11,7 @@ export function addDeployFrontendToS3Stage(
 ) {
   const deployFrontendToS3Action = new codepipelineActions.S3DeployAction({
     actionName: 'deploy-frontend-to-s3',
-    bucket: s3.Bucket.fromBucketArn(cdk.Stack.of(pipeline), 'WebBucketArn', webBucketArn),
+    bucket: s3.Bucket.fromBucketArn(cdk.Stack.of(pipeline), 'WebBucket', webBucketArn),
     input,
   });
 

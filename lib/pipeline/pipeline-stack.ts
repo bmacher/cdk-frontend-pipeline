@@ -8,15 +8,13 @@ import { ApplicationStage } from './app-stage';
 interface PipelineStackProps extends cdk.StackProps {
   // env: cdk.Environment,
   infraRepoArn: string;
-  frontendRepoArn: string;
-  webBucketArn: string;
 }
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: PipelineStackProps) {
     super(scope, id, props);
 
-    const { infraRepoArn, frontendRepoArn, webBucketArn } = props;
+    const { infraRepoArn } = props;
 
     const sourceArtifact = new codepipeline.Artifact();
     const cloudAssemblyArtifact = new codepipeline.Artifact();
@@ -40,9 +38,6 @@ export class PipelineStack extends cdk.Stack {
       synthAction,
     });
 
-    pipeline.addApplicationStage(new ApplicationStage(this, 'Development', {
-      frontendRepoArn,
-      webBucketArn,
-    }));
+    pipeline.addApplicationStage(new ApplicationStage(this, 'Development', { env: props.env }));
   }
 }

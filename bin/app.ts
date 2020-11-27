@@ -7,9 +7,11 @@ const app = new cdk.App();
 
 const infraStack = new InfraStack(app, 'sfubt-infrastructure');
 
-new PipelineStack(app, 'sfubt-pipeline', {
+const pipelineStack = new PipelineStack(app, 'sfubt-pipeline', {
   // env: { account: '', region: 'eu-west-1' },
   infraRepoArn: infraStack.infraRepoArn,
-  frontendRepoArn: infraStack.frontendRepoArn,
-  webBucketArn: infraStack.webBucket.bucketArn,
 });
+
+pipelineStack.addDependency(infraStack);
+
+app.synth();

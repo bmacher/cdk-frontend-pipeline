@@ -2,23 +2,21 @@ import * as cdk from '@aws-cdk/core';
 import * as codecommit from '@aws-cdk/aws-codecommit';
 import * as codepipeline from '@aws-cdk/aws-codepipeline';
 import * as s3 from '@aws-cdk/aws-s3';
+import * as ssm from '@aws-cdk/aws-ssm';
+import { ssmParamNames } from '../ssm-param-names';
 import { addGetFrontendSourceStage } from './add-get-frontend-source-stage';
 import { addBuildFrontendStage } from './add-build-frontend-stage';
 import { addDeployFrontendToS3Stage } from './add-deploy-frontend-stage';
 
-interface FrontendPipelineStackProps extends cdk.StackProps {
-  webBucketArn: string;
-  frontendRepoArn: string;
-}
-
 export class FrontendPipelineStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: FrontendPipelineStackProps) {
-    super(scope, id);
+  constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
+    super(scope, id, props);
 
-    const { webBucketArn, frontendRepoArn } = props;
+    const frontendRepoArn = ssm.StringParameter.fromStringParameterName(this, 'FrontendRepositoryArn', ssmParamNames.FRONTEND_REPO_ARN);
+    const webBucketArn = ssm.StringParameter.fromStringParameterName(this, 'WebBucketArn', ssmParamNames.WEB_BUCKET_ARN);
 
     const frontendRepo = codecommit.Repository.fromRepositoryArn(
-      this, 'FrontendRepository', frontendRepoArn,
+      this, 'FrontendRepository', frontendRepoArn.stringValue,
     );
 
     const artifactBucket = new s3.Bucket(this, 'ArtifactBucket', {
@@ -36,6 +34,6 @@ export class FrontendPipelineStack extends cdk.Stack {
 
     const { frontendBuildOutput } = addBuildFrontendStage(pipeline, frontendSourceOutput);
 
-    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucketArn);
+    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucketArn.stringValue);
   }
 }
