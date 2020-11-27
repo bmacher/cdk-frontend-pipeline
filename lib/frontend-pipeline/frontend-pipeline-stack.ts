@@ -32,7 +32,7 @@ export class FrontendPipelineStack extends cdk.Stack {
     });
 
     const pipeline = new codepipeline.Pipeline(this, 'FrontendDeploymentPipeline', {
-      pipelineName: `${this.stackName}-frontend-deployment-pipeline`,
+      pipelineName: 'sfubt-frontend-deployment-pipeline',
       artifactBucket,
     });
 
