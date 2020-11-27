@@ -13,11 +13,17 @@ export class FrontendPipelineStack extends cdk.Stack {
     super(scope, id, props);
 
     const frontendRepoArn = ssm.StringParameter.fromStringParameterName(this, 'FrontendRepositoryArn', ssmParamNames.FRONTEND_REPO_ARN);
-    const webBucketArn = ssm.StringParameter.fromStringParameterName(this, 'WebBucketArn', ssmParamNames.WEB_BUCKET_ARN);
 
     const frontendRepo = codecommit.Repository.fromRepositoryArn(
       this, 'FrontendRepository', frontendRepoArn.stringValue,
     );
+
+    const webBucket = new s3.Bucket(this, 'WebBucket', {
+      websiteIndexDocument: 'index.html',
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
 
     const artifactBucket = new s3.Bucket(this, 'ArtifactBucket', {
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -34,6 +40,6 @@ export class FrontendPipelineStack extends cdk.Stack {
 
     const { frontendBuildOutput } = addBuildFrontendStage(pipeline, frontendSourceOutput);
 
-    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucketArn.stringValue);
+    addDeployFrontendToS3Stage(pipeline, frontendBuildOutput, webBucket);
   }
 }

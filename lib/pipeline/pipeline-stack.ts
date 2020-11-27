@@ -38,6 +38,6 @@ export class PipelineStack extends cdk.Stack {
       synthAction,
     });
 
-    pipeline.addApplicationStage(new ApplicationStage(this, 'Development', { env: props.env }));
+    pipeline.addApplicationStage(new ApplicationStage(this, 'DeployFrontendPipeline', { env: props.env }));
   }
 }
