@@ -3,7 +3,6 @@
 !.eslintrc.js
 *.d.ts
 node_modules
-accounts.ts
 
 # CDK asset staging directory
 .cdk.staging
